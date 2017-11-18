@@ -25,6 +25,8 @@ public class PlayerController2D : MonoBehaviour
     private bool isMoving;
     public GameObject clickAnimation;
 
+    private Vector3 prevLoc = Vector3.zero;
+
 
 
     // Use this for initialization
@@ -64,11 +66,11 @@ public class PlayerController2D : MonoBehaviour
             targetPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             targetPosition.z = transform.position.z;
 
-            CharacterAnimation();
             if (isMoving == false)
             {
                 isMoving = true;
                 Instantiate(clickAnimation, targetPosition, Quaternion.identity);
+                CharacterAnimation(transform.position, targetPosition);
             }
             
         }
@@ -86,13 +88,84 @@ public class PlayerController2D : MonoBehaviour
     }
 
 
-    private void CharacterAnimation()
+    private void CharacterAnimation(Vector2 originPos, Vector2 targetPos)
     {
-        //TODO:Arrumar ainda nao esta ideal & ainda nao para
-        Vector2 characterPosition = gameObject.transform.position;
-        Vector2 touchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-        if (touchPosition.x < touchPosition.y)
+        /*Vector3 curVel= (transform.position - prevLoc) / Time.deltaTime;
+        
+
+        Debug.Log(curVel);
+        if (curVel.y < 0)
+        {
+            Debug.Log("UP");
+            animator.SetInteger("Direction", 2);
+        }
+        else
+        {
+            Debug.Log("DOWN");
+            animator.SetInteger("Direction", 0);
+        }
+
+        if (curVel.x < 0)
+        {
+            Debug.Log("RIGHT");
+            animator.SetInteger("Direction", 3);
+        }
+        else
+        {
+            Debug.Log("LEFT");
+            animator.SetInteger("Direction", 1);
+        }
+        prevLoc = transform.position;*/
+
+        //TODO:Arrumar ainda nao esta ideal & ainda nao para
+
+        Vector2 heading = (originPos - targetPos)/ Time.deltaTime;
+        float distance = heading.magnitude;
+        Vector2 direction = heading / distance;
+
+        /*Direction
+
+        Value   State
+
+        0   South
+        1   West
+        2   North
+        3   East
+
+        */
+
+        
+        
+        if (Mathf.Abs(originPos.y - targetPos.y) > 1)
+        {
+            Debug.Log("aaaaa");
+            if ((direction.y > 0))
+            {
+                //   South
+                animator.SetInteger("Direction", 0);
+            }
+            else
+            {
+                //   north
+                animator.SetInteger("Direction", 2);
+            }
+        } else
+        {
+            if ((direction.x > 0))
+            {
+                //   West
+                animator.SetInteger("Direction", 1);
+            }
+            else
+            {
+                //   east
+                animator.SetInteger("Direction", 3);
+            }
+        }
+
+
+        /*if (touchPosition.x < touchPosition.y)
         {
             if (touchPosition.x < characterPosition.x)
             {
@@ -113,7 +186,7 @@ public class PlayerController2D : MonoBehaviour
             {
                 animator.SetInteger("Direction", 2);
             }
-        }
+        }*/
     }
 
 }
